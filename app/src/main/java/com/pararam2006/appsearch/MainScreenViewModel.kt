@@ -3,7 +3,6 @@ package com.pararam2006.appsearch
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,16 +11,17 @@ import com.pararam2006.appsearch.entities.AppInfo
 
 class MainScreenViewModel: ViewModel() {
     private val pm = MyApp.instance.packageManager
+    private var appInfoListOriginal by mutableStateOf<List<AppInfo>>(emptyList())
     var appInfoList by mutableStateOf<List<AppInfo>>(emptyList())
         private set
     val input = mutableStateOf("")
 
     fun getApps() {
-        Log.d("MainScreenViewModel", "Begin")
         val intent = Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
-        appInfoList = pm.queryIntentActivities(intent, 0)
+        appInfoListOriginal = pm.queryIntentActivities(intent, 0)
+            .filter { it.loadLabel(pm) != "AppSearch" }
             .map {
                 AppInfo(
                     label = it.loadLabel(pm).toString(),
@@ -31,7 +31,7 @@ class MainScreenViewModel: ViewModel() {
                 )
             }
             .sortedBy { it.label }
-        Log.d("MainScreenViewModel", "End")
+        onInputChange("")
     }
 
     fun startApp(appInfo: AppInfo, context: Context) {
@@ -52,5 +52,8 @@ class MainScreenViewModel: ViewModel() {
 
     fun onInputChange(newInput: String) {
         input.value = newInput
+        appInfoList = appInfoListOriginal.filter {
+            it.label.startsWith(newInput, true)
+        }
     }
 }
