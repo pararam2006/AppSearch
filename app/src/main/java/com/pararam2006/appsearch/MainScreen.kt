@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
@@ -17,6 +18,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -35,15 +37,22 @@ fun MainScreen(
     val gridState = rememberLazyGridState()
 
     Column(
-        modifier = modifier.fillMaxSize().imePadding(),
+        modifier = modifier
+            .fillMaxSize()
+            .imePadding(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
-            verticalArrangement = Arrangement.spacedBy(15.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier.weight(1f),
             state = gridState
         ) {
-            items(appInfoList, key = {it.iconUri}) { item ->
+            items(
+                items = appInfoList,
+                key = { it.label }
+            ) { item ->
                 AppItem(
                     iconUri = item.iconUri,
                     label = item.label,
@@ -58,12 +67,15 @@ fun MainScreen(
             value = input,
             onValueChange = onInputChange,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.85f)
                 .focusRequester(focusRequester),
             singleLine = true,
-            trailingIcon = { IconButton(onClick = {
-                onInputChange("")
-            }) { Icon(imageVector = Icons.Filled.Clear, "") } }
+            shape = RoundedCornerShape(30.dp),
+            trailingIcon = {
+                IconButton(onClick = {
+                    onInputChange("")
+                }) { Icon(imageVector = Icons.Filled.Clear, "") }
+            }
         )
     }
 
@@ -71,7 +83,6 @@ fun MainScreen(
         focusRequester.requestFocus()
     }
 
-    // Скроллим в начало при изменении текста
     LaunchedEffect(input) {
         if (appInfoList.isNotEmpty()) {
             gridState.scrollToItem(0)

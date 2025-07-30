@@ -2,19 +2,19 @@ package com.pararam2006.appsearch
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import com.pararam2006.appsearch.entities.AppInfo
 
-class MainScreenViewModel: ViewModel() {
+class MainScreenViewModel : ViewModel() {
     private val pm = MyApp.instance.packageManager
     private var appInfoListOriginal by mutableStateOf<List<AppInfo>>(emptyList())
     var appInfoList by mutableStateOf<List<AppInfo>>(emptyList())
         private set
-    val input = mutableStateOf("")
+    var input by mutableStateOf("")
 
     fun getApps() {
         val intent = Intent(Intent.ACTION_MAIN).apply {
@@ -25,7 +25,7 @@ class MainScreenViewModel: ViewModel() {
             .map {
                 AppInfo(
                     label = it.loadLabel(pm).toString(),
-                    iconUri = Uri.parse("android.resource://${it.activityInfo.packageName}/${it.activityInfo.applicationInfo.icon}"),
+                    iconUri = "android.resource://${it.activityInfo.packageName}/${it.activityInfo.applicationInfo.icon}".toUri(),
                     packageName = it.activityInfo.packageName,
                     name = it.activityInfo.name,
                 )
@@ -51,7 +51,7 @@ class MainScreenViewModel: ViewModel() {
     }
 
     fun onInputChange(newInput: String) {
-        input.value = newInput
+        input = newInput
         appInfoList = appInfoListOriginal.filter {
             it.label.startsWith(newInput, true)
         }

@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                                 mainScreenViewModel.startApp(appInfo, this)
                             },
                             onInputChange = mainScreenViewModel::onInputChange,
-                            input = mainScreenViewModel.input.value
+                            input = mainScreenViewModel.input
                         )
                     }
                 )
