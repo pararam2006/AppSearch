@@ -51,14 +51,12 @@ fun MainScreen(
         ) {
             items(
                 items = appInfoList,
-                key = { it.label }
+                key = { it.packageName }
             ) { item ->
                 AppItem(
                     iconUri = item.iconUri,
                     label = item.label,
-                    onClick = {
-                        onClick(item)
-                    }
+                    onClick = { onClick(item) }
                 )
             }
         }
